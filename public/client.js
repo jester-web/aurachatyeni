@@ -102,12 +102,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Varsayılan avatar
             const defaultAvatar = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NkY2RjZCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bTAgM2MxLjY2IDAgMyAxLjM0IDMgMyAwIDEuNjYtMS4zNCAzLTMgMy0xLjY2IDAtMy0xLjM0LTMtMyAwLTEuNjYgMS4zNC0zIDMtM3ptMCAxNC4yYy0yLjUgMC00LjcxLTEuMjgtNi0zLjIyLjAzLTEuOTkgNC0zLjA4IDYtMy4wOHM1Ljk3IDEuMDkgNiAzLjA4Yy0xLjI5IDEuOTQtMy41IDMuMjItNiAzLjIyeiIvPjwvc3ZnPg==';
-            const avatarSrc = data.avatarUrl || defaultAvatar;
+            const avatarSrc = data.avatarUrl || data.avatarURL || defaultAvatar;
+            const timestamp = new Date(data.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
             item.innerHTML = `
                 <img src="${avatarSrc}" class="avatar" alt="${data.user}" onerror="this.src='${defaultAvatar}'">
                 <div class="message-content">
-                    <strong>${data.user}</strong>
+                    <div class="message-header"><strong>${data.username || data.user}</strong><span class="timestamp">${timestamp}</span></div>
                     <span>${data.text}</span>
                 </div>`;
             if (data.user === myUsername) {
@@ -115,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        messages.appendChild(item);
-        messages.scrollTop = messages.scrollHeight; // Otomatik aşağı kaydır
+        messages.prepend(item); // Mesajları üste ekle (CSS ile ters çevrildiği için altta görünecek)
+        // messages.scrollTop = messages.scrollHeight; // Artık buna gerek yok
     });
 
     // Online kullanıcı listesini güncelleme

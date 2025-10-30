@@ -209,39 +209,49 @@ body.dark-theme .icon-sun {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    /* gap: 15px; Bu satırı kaldırıyoruz */
 }
 
 #messages li {
-    padding: 10px 15px;
-    border-radius: var(--border-radius);
-    max-width: 65%;
+    padding: 2px 30px; /* Daha kompakt bir görünüm için padding'i ayarla */
+    /* border-radius: var(--border-radius); Balon görünümünü kaldır */
+    max-width: 100%; /* Mesajlar artık tüm genişliği kullanabilir */
     word-wrap: break-word;
     line-height: 1.5;
-    background-color: var(--background-color);
-    align-self: flex-start; /* Diğerlerinin mesajları sola yaslı */
+    background-color: transparent; /* Balon arka planını kaldır */
+    align-self: flex-start;
     gap: 15px;
+    position: relative;
+}
+
+#messages li:hover {
+    background-color: rgba(122, 117, 255, 0.05); /* Üzerine gelince hafif vurgu */
+}
+
+body.dark-theme #messages li:hover {
+    background-color: rgba(255, 255, 255, 0.03);
 }
 
 /* Kendi mesajlarımız için stil */
 #messages li.own-message {
-    background-color: var(--primary-color);
-    color: white;
-    align-self: flex-end; /* Kendi mesajlarımız sağa yaslı */
-    flex-direction: row-reverse; /* Avatarı sağa alır */
+    background-color: transparent; /* Balon arka planını kaldır */
+    color: var(--text-color); /* Normal metin rengine dön */
+    align-self: flex-start; /* Tüm mesajlar sola yaslı olacak */
+    flex-direction: row; /* Avatar yönünü düzelt */
 }
 
 #messages li.own-message strong {
-    color: var(--primary-light); /* İsim rengi */
+    color: var(--primary-color); /* İsim rengini ana renge geri getir */
 }
 
 #messages li.system {
     text-align: center;
     color: var(--text-muted-color);
     font-style: italic;
-    background: none;
+    background: transparent;
     align-self: center;
     font-size: 0.9rem;
+    padding: 10px 0;
 }
 
 #typing-indicator {
@@ -299,13 +309,29 @@ body.dark-theme #messages li.private-message {
     border-left-color: #a18007;
 }
 
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.timestamp {
+    font-size: 0.75rem;
+    color: var(--text-muted-color);
+    display: none; /* Normalde gizli */
+}
+
+#messages li:hover .timestamp {
+    display: inline; /* Üzerine gelince göster */
+}
+
 #messages li .message-content {
     display: flex;
     flex-direction: column;
 }
 
 #messages li strong {
-    margin-bottom: 4px;
+    /* margin-bottom: 4px; Kaldırıldı, artık header içinde */
     color: var(--primary-color);
     font-weight: 600;
 }
