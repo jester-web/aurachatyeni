@@ -1,0 +1,249 @@
+/* public/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+:root {
+    --primary-color: #5B54FE;
+    --primary-light: #E8E7FF;
+    --secondary-color: #00C49A;
+    --background-color: #F4F7FC;
+    --surface-color: #FFFFFF;
+    --text-color: #333333;
+    --text-muted-color: #777777;
+    --border-color: #EAEAEA;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --border-radius: 12px;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Giriş Ekranı */
+#auth-container {
+    background: var(--surface-color);
+    padding: 50px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#auth-container h1 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+#name-input {
+    border: 1px solid var(--border-color);
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    width: 250px;
+    margin-right: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+#name-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    background-color: #4a43d8;
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Sohbet Ekranı */
+#chat-container {
+    display: flex;
+    width: 90vw;
+    height: 95vh;
+    max-width: 1200px;
+    background: var(--surface-color);
+    box-shadow: var(--shadow);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+#sidebar {
+    width: 250px;
+    background-color: var(--background-color);
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#sidebar h3 {
+    margin-top: 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    font-weight: 600;
+}
+
+#user-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#user-list li {
+    padding: 10px 15px;
+    color: var(--text-muted-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+#user-list li.speaking {
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: bold;
+}
+
+#main-chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--surface-color);
+}
+
+#messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 30px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#messages li {
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    max-width: 65%;
+    word-wrap: break-word;
+    line-height: 1.5;
+    background-color: var(--background-color);
+    align-self: flex-start; /* Diğerlerinin mesajları sola yaslı */
+}
+
+/* Kendi mesajlarımız için stil */
+#messages li.own-message {
+    background-color: var(--primary-color);
+    color: white;
+    align-self: flex-end; /* Kendi mesajlarımız sağa yaslı */
+}
+
+#messages li.own-message strong {
+    color: var(--primary-light); /* İsim rengi */
+}
+
+#messages li.system {
+    text-align: center;
+    color: var(--text-muted-color);
+    font-style: italic;
+    background: none;
+    align-self: center;
+    font-size: 0.9rem;
+}
+
+#messages li strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+#form {
+    display: flex;
+    padding: 20px;
+    gap: 10px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--background-color);
+}
+
+#input {
+    border: 1px solid var(--border-color);
+    padding: 12px 20px;
+    flex: 1;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+
+#input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Düğme Stilleri */
+#toggle-voice-button {
+    background-color: var(--secondary-color);
+}
+
+#toggle-voice-button:hover {
+    background-color: #00a580;
+}
+
+#toggle-mute-button {
+    background: #ffc107;
+    color: #333;
+}
+
+#toggle-mute-button:hover {
+    background: #e0a800;
+}
+
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}

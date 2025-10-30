@@ -1,0 +1,40 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Room Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Giriş Ekranı -->
+    <div id="auth-container">
+        <h1>One Room Chat</h1>
+        <input id="name-input" autocomplete="off" placeholder="Enter your name" />
+        <button id="join-button">Join Chat</button>
+    </div>
+
+    <!-- Sohbet Ekranı -->
+    <div id="chat-container" class="hidden">
+        <div id="sidebar">
+            <h3>Online Users</h3>
+            <ul id="user-list"></ul>
+        </div>
+        <div id="main-chat">
+            <div id="remote-audios"></div> <!-- Uzak ses akışları buraya eklenecek -->
+            <ul id="messages"></ul>
+            <form id="form">
+                <input id="input" autocomplete="off" placeholder="Type a message" />
+                <button>Send</button>
+                <button type="button" id="toggle-mute-button" class="hidden">Mute</button> <!-- Mute Düğmesi -->
+                <button type="button" id="toggle-voice-button">Start Voice</button> <!-- Sesli Sohbet Düğmesi -->
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>
