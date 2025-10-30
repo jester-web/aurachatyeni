@@ -13,9 +13,9 @@ function createWindow() {
     webPreferences: {
       // Ön yükleme betiği, renderer sürecine Node.js API'lerini güvenli bir şekilde sunar
       preload: path.join(__dirname, 'preload.js'),
-      // Renderer sürecinde Node.js entegrasyonunu etkinleştirir (güvenlik nedeniyle dikkatli kullanın)
-      nodeIntegration: true,
-      contextIsolation: false,
+      // nodeIntegration'ı kapatmak ve contextIsolation'ı açmak güvenlik için önemlidir.
+      nodeIntegration: false, // false olmalı
+      contextIsolation: true, // true olmalı
     },
   });
 
