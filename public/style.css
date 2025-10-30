@@ -14,6 +14,19 @@
     --border-radius: 12px;
 }
 
+/* Koyu Tema Renkleri */
+body.dark-theme {
+    --primary-color: #7A75FF;
+    --primary-light: #2a2a57;
+    --secondary-color: #00C49A;
+    --background-color: #1A1A2E;
+    --surface-color: #1E1E3F;
+    --text-color: #EAEAEA;
+    --text-muted-color: #8A8A9E;
+    --border-color: #2E2E54;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
 body {
     margin: 0;
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -23,6 +36,7 @@ body {
     height: 100vh;
     background-color: var(--background-color);
     color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* Giriş Ekranı */
@@ -42,17 +56,25 @@ body {
     color: var(--primary-color);
 }
 
-#name-input {
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#name-input,
+#avatar-url-input {
     border: 1px solid var(--border-color);
     padding: 12px 15px;
     border-radius: var(--border-radius);
     width: 250px;
-    margin-right: 10px;
     font-size: 1rem;
     transition: border-color 0.3s ease;
 }
 
-#name-input:focus {
+#name-input:focus,
+#avatar-url-input:focus {
     outline: none;
     border-color: var(--primary-color);
 }
@@ -101,11 +123,37 @@ button:active {
     gap: 20px;
 }
 
-#sidebar h3 {
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 0;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
+}
+
+#sidebar h3 {
+    margin: 0;
     font-weight: 600;
+}
+
+#theme-toggle-button {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    cursor: pointer;
+    color: var(--text-muted-color);
+    transition: all 0.3s ease;
+}
+
+#theme-toggle-button:hover {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateY(0) rotate(15deg);
+    background-color: transparent;
 }
 
 #user-list {
@@ -125,12 +173,26 @@ button:active {
     transition: all 0.3s ease;
     font-weight: 500;
 }
+#user-list li, #messages li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
 #user-list li.speaking {
     background-color: var(--secondary-color);
     color: white;
     font-weight: bold;
 }
+
+body:not(.dark-theme) .icon-moon {
+    display: none;
+}
+
+body.dark-theme .icon-sun {
+    display: none;
+}
+
 
 #main-chat {
     flex: 1;
@@ -158,6 +220,7 @@ button:active {
     line-height: 1.5;
     background-color: var(--background-color);
     align-self: flex-start; /* Diğerlerinin mesajları sola yaslı */
+    gap: 15px;
 }
 
 /* Kendi mesajlarımız için stil */
@@ -165,6 +228,7 @@ button:active {
     background-color: var(--primary-color);
     color: white;
     align-self: flex-end; /* Kendi mesajlarımız sağa yaslı */
+    flex-direction: row-reverse; /* Avatarı sağa alır */
 }
 
 #messages li.own-message strong {
@@ -180,11 +244,79 @@ button:active {
     font-size: 0.9rem;
 }
 
+#typing-indicator {
+    padding: 0 30px 10px;
+    height: 20px;
+    color: var(--text-muted-color);
+    font-style: italic;
+}
+
+#video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--background-color);
+    overflow-y: auto;
+}
+
+.video-wrapper {
+    position: relative;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.video-wrapper video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.local-video video {
+    transform: scaleX(-1); /* Kendi görüntümüzü ayna gibi göster */
+}
+
+.video-label {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+#messages li.private-message {
+    background-color: #fffbe6; /* Açık sarı */
+    border-left: 4px solid #ffc107;
+    align-self: flex-start;
+}
+
+body.dark-theme #messages li.private-message {
+    background-color: #3e382b;
+    border-left-color: #a18007;
+}
+
+#messages li .message-content {
+    display: flex;
+    flex-direction: column;
+}
+
 #messages li strong {
-    display: block;
     margin-bottom: 4px;
     color: var(--primary-color);
     font-weight: 600;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover; /* Resmin orantısını korur */
+    background-color: #eee; /* Resim yüklenemezse arka plan */
+    flex-shrink: 0; /* Küçülmesini engeller */
 }
 
 #form {
@@ -193,6 +325,13 @@ button:active {
     gap: 10px;
     border-top: 1px solid var(--border-color);
     background-color: var(--background-color);
+}
+
+#emoji-button {
+    background: none;
+    font-size: 1.5rem;
+    padding: 0 10px;
+    color: var(--text-muted-color);
 }
 
 #input {
@@ -221,6 +360,24 @@ button:active {
     background-color: #00a580;
 }
 
+#toggle-video-button {
+    background-color: #fd7e14; /* Turuncu */
+    margin-right: 10px;
+}
+
+#toggle-video-button:hover {
+    background-color: #e36d0a;
+}
+
+#toggle-screen-button {
+    background-color: #6f42c1; /* Mor renk */
+    margin-right: 10px;
+}
+
+#toggle-screen-button:hover {
+    background-color: #5a3d9a;
+}
+
 #toggle-mute-button {
     background: #ffc107;
     color: #333;
@@ -246,4 +403,8 @@ button:active {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #aaa;
+}
+
+emoji-picker {
+    z-index: 100;
 }

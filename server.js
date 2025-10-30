@@ -20,9 +20,9 @@ io.on('connection', (socket) => {
     console.log('Bir kullanıcı bağlandı:', socket.id);
 
     // Yeni kullanıcı katıldığında
-    socket.on('join chat', (username) => {
-        socket.username = username;
-        onlineUsers[socket.id] = username;
+    socket.on('join chat', ({ username, avatarUrl }) => {
+        socket.userData = { username, avatarUrl }; // Kullanıcı verilerini sakla
+        onlineUsers[socket.id] = { username, avatarUrl };
         console.log(`${username} sohbete katıldı.`);
 
         // Tüm istemcilere yeni kullanıcı listesini gönder
@@ -38,36 +38,51 @@ io.on('connection', (socket) => {
     // Bir istemci mesaj gönderdiğinde
     socket.on('chat message', (msg) => {
         // Mesajı gönderen dahil tüm istemcilere yayınla
-        io.emit('chat message', { user: socket.username, text: msg });
+        io.emit('chat message', { user: socket.userData.username, avatarUrl: socket.userData.avatarUrl, text: msg, type: 'public' });
+    });
+
+    // Özel mesaj gönderme
+    socket.on('private message', ({ recipientUsername, message }) => {
+        const recipientSocket = Object.values(io.sockets.sockets).find(
+            s => s.userData && s.userData.username === recipientUsername
+        );
+
+        if (recipientSocket) {
+            // Gönderene ve alıcıya özel mesajı gönder
+            recipientSocket.emit('chat message', { user: socket.userData.username, avatarUrl: socket.userData.avatarUrl, text: message, type: 'private', recipient: recipientUsername });
+            socket.emit('chat message', { user: socket.userData.username, avatarUrl: socket.userData.avatarUrl, text: message, type: 'private', recipient: recipientUsername });
+        } else {
+            socket.emit('chat message', { user: 'System', text: `Kullanıcı bulunamadı: ${recipientUsername}` });
+        }
     });
 
     // Bir istemci bağlantıyı kestiğinde
     socket.on('disconnect', () => {
-        if (socket.username) {
-            console.log(`${socket.username} ayrıldı.`);
+        if (socket.userData) {
+            console.log(`${socket.userData.username} ayrıldı.`);
             delete onlineUsers[socket.id];
 
             // Tüm istemcilere güncel kullanıcı listesini gönder
                 io.emit('update user list', onlineUsers); // Artık {socketId: username} objesini gönderiyoruz
 
             // Diğer kullanıcılara ayrıldığını bildir
-            io.emit('chat message', { user: 'System', text: `${socket.username} sohbetten ayrıldı.` });
+            io.emit('chat message', { user: 'System', text: `${socket.userData.username} sohbetten ayrıldı.` });
         }
     });
 
         // WebRTC Sinyalizasyon olayları
         socket.on('webrtc-offer', ({ offer, targetSocketId }) => {
-            console.log(`Offer from ${socket.username} (${socket.id}) to ${targetSocketId}`);
+            console.log(`Offer from ${socket.userData.username} (${socket.id}) to ${targetSocketId}`);
             socket.to(targetSocketId).emit('webrtc-offer', { offer, senderSocketId: socket.id });
         });
 
         socket.on('webrtc-answer', ({ answer, targetSocketId }) => {
-            console.log(`Answer from ${socket.username} (${socket.id}) to ${targetSocketId}`);
+            console.log(`Answer from ${socket.userData.username} (${socket.id}) to ${targetSocketId}`);
             socket.to(targetSocketId).emit('webrtc-answer', { answer, senderSocketId: socket.id });
         });
 
         socket.on('webrtc-ice-candidate', ({ candidate, targetSocketId }) => {
-            // console.log(`ICE Candidate from ${socket.username} (${socket.id}) to ${targetSocketId}`); // Çok fazla log olmaması için yorum satırı yapıldı
+            // console.log(`ICE Candidate from ${socket.userData.username} (${socket.id}) to ${targetSocketId}`); // Çok fazla log olmaması için yorum satırı yapıldı
             socket.to(targetSocketId).emit('webrtc-ice-candidate', { candidate, senderSocketId: socket.id });
         });
 
@@ -75,6 +90,21 @@ io.on('connection', (socket) => {
         socket.on('speaking', (isSpeaking) => {
             socket.broadcast.emit('user-speaking', { socketId: socket.id, isSpeaking });
         });
+
+        // Ekran paylaşımını durdurma olayı
+        socket.on('stop-screen-share', () => {
+            socket.broadcast.emit('user-stopped-sharing', { socketId: socket.id });
+        });
+
+        // Kullanıcı yazıyor olayları
+        socket.on('typing', () => {
+            socket.broadcast.emit('user_is_typing', { username: socket.userData.username });
+        });
+
+        socket.on('stop_typing', () => {
+            socket.broadcast.emit('user_stopped_typing', { username: socket.userData.username });
+        });
+
 });
 
 server.listen(PORT, () => {

@@ -4,15 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One Room Chat</title>
+    <title>AuraChat</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <!-- Giriş Ekranı -->
     <div id="auth-container">
-        <h1>One Room Chat</h1>
-        <input id="name-input" autocomplete="off" placeholder="Enter your name" />
+        <h1>AuraChat</h1>
+        <div class="input-group">
+            <input id="name-input" autocomplete="off" placeholder="Enter your name" />
+            <input id="avatar-url-input" autocomplete="off" placeholder="Avatar URL (optional)" />
+        </div>
         <button id="join-button">Join Chat</button>
     </div>
 
@@ -23,17 +26,24 @@
             <ul id="user-list"></ul>
         </div>
         <div id="main-chat">
+            <div id="video-grid"></div> <!-- Ekran paylaşımları buraya eklenecek -->
             <div id="remote-audios"></div> <!-- Uzak ses akışları buraya eklenecek -->
+            <div id="typing-indicator"></div> <!-- Kullanıcı yazıyor göstergesi -->
             <ul id="messages"></ul>
             <form id="form">
+                <button type="button" id="emoji-button">😊</button>
                 <input id="input" autocomplete="off" placeholder="Type a message" />
                 <button>Send</button>
+                <button type="button" id="toggle-video-button" class="hidden">Start Video</button> <!-- Video Sohbet Düğmesi -->
+                <button type="button" id="toggle-screen-button" class="hidden">Share Screen</button> <!-- Ekran Paylaşma Düğmesi -->
                 <button type="button" id="toggle-mute-button" class="hidden">Mute</button> <!-- Mute Düğmesi -->
                 <button type="button" id="toggle-voice-button">Start Voice</button> <!-- Sesli Sohbet Düğmesi -->
             </form>
         </div>
     </div>
-
+    
+    <!-- Emoji Picker Kütüphanesi -->
+    <script type="module" src="/node_modules/emoji-picker-element/index.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="client.js"></script>
 </body>
