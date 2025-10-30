@@ -20,8 +20,8 @@ function createWindow() {
   });
 
   // Pencereye yüklenecek HTML dosyası.
-  // Projenizin kök dizininde bir 'index.html' dosyası olduğundan emin olun.
-  mainWindow.loadFile('index.html');
+  // Artık 'public' klasöründeki doğru yolu işaret ediyoruz.
+  mainWindow.loadFile(path.join(__dirname, '../public/index.html'));
 
   // Geliştirici araçlarını açmak için bu satırı kullanabilirsiniz
   // mainWindow.webContents.openDevTools();
