@@ -3,12 +3,36 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require("socket.io");
+const mongoose = require('mongoose');
+require('dotenv').config(); // .env dosyasını yükler
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
+
+// MongoDB Bağlantısı
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('MongoDB bağlantısı başarılı.'))
+    .catch(err => console.error('MongoDB bağlantı hatası:', err));
+
+// Mesaj Şeması ve Modeli
+const MessageSchema = new mongoose.Schema({
+    username: String,
+    avatarUrl: String,
+    text: String,
+    type: { type: String, default: 'public' },
+    timestamp: { type: Date, default: Date.now }
+});
+
+const Message = mongoose.model('Message', MessageSchema);
+
+async function getLastMessages() {
+    // Son 50 mesajı getir
+    return await Message.find({ type: 'public' }).sort({ timestamp: -1 }).limit(50).exec();
+}
+
 
 // Frontend dosyalarını sunmak için public klasörünü kullan
 app.use(express.static('public'));
@@ -20,13 +44,21 @@ io.on('connection', (socket) => {
     console.log('Bir kullanıcı bağlandı:', socket.id);
 
     // Yeni kullanıcı katıldığında
-    socket.on('join chat', ({ username, avatarUrl }) => {
+    socket.on('join chat', async ({ username, avatarUrl }) => {
         socket.userData = { username, avatarUrl }; // Kullanıcı verilerini sakla
         onlineUsers[socket.id] = { username, avatarUrl };
         console.log(`${username} sohbete katıldı.`);
 
+        // Yeni kullanıcıya sohbet geçmişini gönder
+        try {
+            const lastMessages = await getLastMessages();
+            socket.emit('chat_history', lastMessages.reverse()); // Mesajları doğru sırada (eskiden yeniye) gönder
+        } catch (err) {
+            console.error('Sohbet geçmişi alınamadı:', err);
+        }
+
         // Tüm istemcilere yeni kullanıcı listesini gönder
-            io.emit('update user list', onlineUsers); // Artık {socketId: username} objesini gönderiyoruz
+            io.emit('update user list', onlineUsers); // Artık {socketId: {username, avatarUrl}} objesini gönderiyoruz
 
         // Yeni katılan kullanıcıya hoş geldin mesajı gönder
             socket.emit('chat message', { user: 'System', text: `Sohbete hoş geldin, ${username}!` });
@@ -37,8 +69,18 @@ io.on('connection', (socket) => {
 
     // Bir istemci mesaj gönderdiğinde
     socket.on('chat message', (msg) => {
+        const messageData = {
+            username: socket.userData.username,
+            avatarUrl: socket.userData.avatarUrl,
+            text: msg,
+            type: 'public'
+        };
+        // Mesajı veritabanına kaydet
+        const newMessage = new Message(messageData);
+        newMessage.save();
+
         // Mesajı gönderen dahil tüm istemcilere yayınla
-        io.emit('chat message', { user: socket.userData.username, avatarUrl: socket.userData.avatarUrl, text: msg, type: 'public' });
+        io.emit('chat message', { user: messageData.username, avatarUrl: messageData.avatarUrl, text: messageData.text, type: 'public' });
     });
 
     // Özel mesaj gönderme
@@ -63,7 +105,7 @@ io.on('connection', (socket) => {
             delete onlineUsers[socket.id];
 
             // Tüm istemcilere güncel kullanıcı listesini gönder
-                io.emit('update user list', onlineUsers); // Artık {socketId: username} objesini gönderiyoruz
+                io.emit('update user list', onlineUsers); // Artık {socketId: {username, avatarUrl}} objesini gönderiyoruz
 
             // Diğer kullanıcılara ayrıldığını bildir
             io.emit('chat message', { user: 'System', text: `${socket.userData.username} sohbetten ayrıldı.` });

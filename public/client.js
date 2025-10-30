@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="message-header"><strong>${data.username || data.user}</strong><span class="timestamp">${timestamp}</span></div>
                     <span>${data.text}</span>
                 </div>`;
-            if (data.user === myUsername) {
+            if ((data.username || data.user) === myUsername) {
                 item.classList.add('own-message'); // Kendi mesajımızsa sınıf ekle
             }
         }
